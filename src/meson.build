@@ -1,5 +1,7 @@
 src_files += files(
-    'string_builder.c',
-    'string_builder.h',
+    'tstr_builder.c',
+    'tstr_builder.h',
     'utils.h',
 )
+
+inc_dirs += include_directories('.')
