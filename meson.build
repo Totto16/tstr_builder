@@ -34,7 +34,7 @@ deps += dependency(
 
 cc = meson.get_compiler('c')
 
-internal_c_args = []
+internal_c_args = ['-D_TSTRING_BUILDER_IMPL_INTERNAL__']
 
 internal_c_args += cc.get_supported_arguments(
     '-Wassign-enum',

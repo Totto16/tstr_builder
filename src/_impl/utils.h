@@ -1,6 +1,10 @@
 
 #pragma once
 
+#ifndef _TSTRING_BUILDER_IMPL_INTERNAL__
+	#error "can only be used internally"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
