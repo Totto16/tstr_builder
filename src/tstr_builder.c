@@ -1,6 +1,9 @@
 #include "./tstr_builder.h"
 
+#include "./_impl/utils.h"
+
 #include <tvec.h>
+
 
 /* NOLINTBEGIN(misc-use-internal-linkage,totto-use-fixed-width-types-var) */
 TVEC_DEFINE_AND_IMPLEMENT_VEC_TYPE(char)
@@ -25,25 +28,26 @@ StringBuilder* string_builder_init() {
 	return result;
 }
 
-NODISCARD StringResult new_string_result_ok(void) {
-	return (StringResult){ .is_error = false };
+TSTR_BUILDER_NODISCARD StringBuilderResult new_string_builder_result_ok(void) {
+	return (StringBuilderResult){ .is_error = false };
 }
 
-NODISCARD StringResult new_string_result_error(const tstr_static error) {
-	return (StringResult){ .is_error = true, .data = { .error = error } };
+TSTR_BUILDER_NODISCARD StringBuilderResult
+new_string_builder_result_error(const tstr_static error) {
+	return (StringBuilderResult){ .is_error = true, .data = { .error = error } };
 }
 
 // the actual append method, it accepts a string builder where to append and then appends the body
 // string there
-static StringResult string_builder_append_string_impl(StringBuilder* string_builder,
-                                                      const char* string, size_t size) {
+static StringBuilderResult string_builder_append_string_impl(StringBuilder* string_builder,
+                                                             const char* string, size_t size) {
 
 	if(size == 0) {
-		return STRING_RES_OK();
+		return STRING_BUILDER_RES_OK();
 	}
 
 	if(string_builder == NULL) {
-		return STRING_RES_ERR_UNIQUE();
+		return STRING_BUILDER_RES_ERR_UNIQUE();
 	}
 
 	const size_t current_size = TVEC_LENGTH(char, string_builder->value);
@@ -61,13 +65,14 @@ static StringResult string_builder_append_string_impl(StringBuilder* string_buil
 	// TODO(Totto): make this a public function on the TVEC
 	memcpy(string_builder->value.data + current_size - (current_size == 0 ? 0 : 1), string, size);
 
-	return STRING_RES_OK();
+	return STRING_BUILDER_RES_OK();
 }
 
-StringResult string_builder_append_string(StringBuilder* string_builder, char* string) {
+StringBuilderResult string_builder_append_string(StringBuilder* string_builder, char* string) {
 	const size_t length = strlen(string);
 
-	const StringResult result = string_builder_append_string_impl(string_builder, string, length);
+	const StringBuilderResult result =
+	    string_builder_append_string_impl(string_builder, string, length);
 
 	free(string);
 
@@ -75,37 +80,37 @@ StringResult string_builder_append_string(StringBuilder* string_builder, char* s
 }
 
 // simple wrapper if just a constant string has to be appended
-StringResult string_builder_append_single(StringBuilder* const string_builder,
-                                          const char* const static_string) {
+StringBuilderResult string_builder_append_single(StringBuilder* const string_builder,
+                                                 const char* const static_string) {
 	const size_t length = strlen(static_string);
 
 	return string_builder_append_string_impl(string_builder, static_string, length);
 }
 
-StringResult string_builder_append_tstr_static(StringBuilder* const string_builder,
-                                               const tstr_static static_string) {
+StringBuilderResult string_builder_append_tstr_static(StringBuilder* const string_builder,
+                                                      const tstr_static static_string) {
 	return string_builder_append_string_impl(string_builder, static_string.ptr, static_string.len);
 }
 
-StringResult string_builder_append_tstr(StringBuilder* const string_builder,
-                                        const tstr* const str) {
+StringBuilderResult string_builder_append_tstr(StringBuilder* const string_builder,
+                                               const tstr* const str) {
 	return string_builder_append_string_impl(string_builder, tstr_cstr(str), tstr_len(str));
 }
 
-StringResult string_builder_append_string_builder(StringBuilder* const string_builder,
-                                                  StringBuilder** const string_builder2) {
+StringBuilderResult string_builder_append_string_builder(StringBuilder* const string_builder,
+                                                         StringBuilder** const string_builder2) {
 
 	if(string_builder2 == NULL) {
-		return STRING_RES_ERR_UNIQUE();
+		return STRING_BUILDER_RES_ERR_UNIQUE();
 	}
 
 	if(*string_builder2 == NULL) {
-		return STRING_RES_ERR_UNIQUE();
+		return STRING_BUILDER_RES_ERR_UNIQUE();
 	}
 
 	tstr string_builder_2_buffer = string_builder_release_into_tstr(string_builder2);
 
-	const StringResult result =
+	const StringBuilderResult result =
 	    string_builder_append_tstr(string_builder, &string_builder_2_buffer);
 
 	tstr_free(&string_builder_2_buffer);
@@ -113,7 +118,8 @@ StringResult string_builder_append_string_builder(StringBuilder* const string_bu
 	return result;
 }
 
-NODISCARD size_t string_builder_get_string_size(const StringBuilder* const string_builder) {
+TSTR_BUILDER_NODISCARD size_t
+string_builder_get_string_size(const StringBuilder* const string_builder) {
 
 	if(string_builder == NULL) {
 		return 0;
@@ -125,7 +131,7 @@ NODISCARD size_t string_builder_get_string_size(const StringBuilder* const strin
 	return current_string_size;
 }
 
-NODISCARD tstr string_builder_release_into_tstr(StringBuilder** const string_builder) {
+TSTR_BUILDER_NODISCARD tstr string_builder_release_into_tstr(StringBuilder** const string_builder) {
 
 	if(string_builder == NULL) {
 		return tstr_null();

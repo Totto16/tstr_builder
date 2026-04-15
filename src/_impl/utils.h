@@ -51,8 +51,7 @@ extern "C" {
 
 #endif
 
-#define STRINGIFY(a) STR_IMPL(a)
-#define STR_IMPL(a) #a
+#define UNUSED(v) ((void)(v))
 
 #ifdef __cplusplus
 }
