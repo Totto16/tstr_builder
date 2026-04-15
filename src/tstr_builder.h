@@ -7,7 +7,7 @@
 #include <tstr.h>
 
 // in here there are several utilities that are used across all .h and .c files
-#include "./utils.h"
+#include "./_impl/utils.h"
 
 // simple String builder used in http_protocol, its super convenient, self implemented
 
