@@ -5,9 +5,7 @@
 #include <string.h>
 
 // in here there are several utilities that are used across all .h and .c files
-#include "utils/log.h"
-#include "utils/sized_buffer.h"
-#include "utils/utils.h"
+#include "./utils.h"
 
 // simple String builder used in http_protocol, its super convenient, self implemented
 
