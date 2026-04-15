@@ -1,0 +1,8 @@
+[wrap-git]
+directory = tstr.h
+url = https://github.com/Totto16/tstr.h.git
+revision = c7b29108c427223a2b4b45dd16c1aba3d8865f43
+depth = 1
+
+[provide]
+dependency_names = tstr.h
