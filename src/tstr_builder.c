@@ -4,7 +4,6 @@
 
 #include <tvec.h>
 
-
 /* NOLINTBEGIN(misc-use-internal-linkage,totto-use-fixed-width-types-var) */
 TVEC_DEFINE_AND_IMPLEMENT_VEC_TYPE(char)
 /* NOLINTEND(misc-use-internal-linkage,totto-use-fixed-width-types-var) */
@@ -143,6 +142,7 @@ TSTR_BUILDER_NODISCARD tstr string_builder_release_into_tstr(StringBuilder** con
 
 	if((*string_builder)->value.data == NULL) {
 		free_string_builder(*string_builder);
+		*string_builder = NULL;
 		return tstr_null();
 	}
 
