@@ -21,36 +21,30 @@ jobs:
 
           - name: Linux (GCC, Arm64)
             os: ubuntu
-            os-version: 24.04-arm
+            os-version: 26.04-arm
             use-clang: false
 
           - name: Linux (Clang, Arm64)
             os: ubuntu
-            os-version: 24.04-arm
+            os-version: 26.04-arm
             use-clang: true
 
           - name: Linux (GCC)
             os: ubuntu
-            os-version: 24.04
+            os-version: 26.04
             use-clang: false
 
           - name: Linux (Clang)
             os: ubuntu
-            os-version: 24.04
+            os-version: 26.04
             use-clang: true
-
-          - name: MacOS (x86_64)
-            os: macos
-            os-version: 15-intel
-            arm: false
 
           - name: MacOS (Arm64)
             os: macos
-            os-version: 14
-            arm: true
+            os-version: 26
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: "0"
 
@@ -65,9 +59,9 @@ jobs:
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 21
-          echo "CC=clang-21" >> "$GITHUB_ENV"
-          echo "CXX=clang++-21" >> "$GITHUB_ENV"
+          sudo ./llvm.sh 22
+          echo "CC=clang-22" >> "$GITHUB_ENV"
+          echo "CXX=clang++-22" >> "$GITHUB_ENV"
 
       - name: Setup GCC (Linux)
         if: matrix.config.os == 'ubuntu' && matrix.config.use-clang == false
@@ -76,20 +70,15 @@ jobs:
           version: 14
           platform: x64 # note, this isn't really correct
 
-      # todo: remove this , that just fixes a current CI bug in MacOS x86_64
-      - name: Fix LLVM 18 (MacOS x86_64)
-        if: matrix.config.os == 'macos' && matrix.config.arm == false
-        run: |
-          brew unlink llvm@18
 
       - name: Setup Clang (MacOS)
         if: matrix.config.os == 'macos'
         run: |
           brew update
-          brew install llvm@21 lld@21
-          echo "$(brew --prefix)/opt/llvm@21/bin" >> $GITHUB_PATH
-          echo "LDFLAGS=-L$(brew --prefix)/opt/llvm@21/lib -L$(brew --prefix)/opt/llvm@21/lib/c++ -Wl,-rpath,$(brew --prefix)/opt/llvm@21/lib/c++" >> "$GITHUB_ENV"
-          echo "CPPFLAGS=-I$(brew --prefix)/opt/llvm@21/include" >> "$GITHUB_ENV"
+          brew install llvm@22 lld@22
+          echo "$(brew --prefix)/opt/llvm@22/bin" >> $GITHUB_PATH
+          echo "LDFLAGS=-L$(brew --prefix)/opt/llvm@22/lib -L$(brew --prefix)/opt/llvm@22/lib/c++ -Wl,-rpath,$(brew --prefix)/opt/llvm@22/lib/c++" >> "$GITHUB_ENV"
+          echo "CPPFLAGS=-I$(brew --prefix)/opt/llvm@22/include" >> "$GITHUB_ENV"
           echo "CC=clang" >> "$GITHUB_ENV"
           echo "CC_LD=lld" >> "$GITHUB_ENV"
 
@@ -110,16 +99,6 @@ jobs:
         run: |
           pip install meson --break-system-packages
 
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: 10
-
       - name: Install dependencies (Linux)
         if: matrix.config.os == 'ubuntu'
         run: |
@@ -130,7 +109,7 @@ jobs:
         if: matrix.config.os == 'macos'
         run: |
           brew update
-          brew install openssl@3.0 git
+          brew install git
 
       - name: Configure
         run: |

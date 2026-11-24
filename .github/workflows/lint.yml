@@ -8,12 +8,12 @@ on:
 jobs:
   cpp-linter:
     name: C++ lints(clang-format + clang-tidy)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       pull-requests: write
       issues: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # NOTE: meson has no dependencies, so --break-system-packages doesn't really break anything!
       - name: Setup Meson

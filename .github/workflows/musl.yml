@@ -9,8 +9,8 @@ on:
 jobs:
   build:
     name: ${{ matrix.config.name }}
-    runs-on: ubuntu-24.04
-    container: alpine:3.23
+    runs-on: ubuntu-26.04
+    container: alpine:3.24
 
     strategy:
       fail-fast: false
@@ -27,9 +27,11 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add wget python3 py3-pip ca-certificates samurai git pkgconf ${{ ( matrix.config.use-clang == true ) && 'clang21' || 'gcc musl-dev g++' }}
-          echo "CC=${{ matrix.config.use-clang == true && 'clang-21' || 'gcc' }}" >> "$GITHUB_ENV"
-          echo "CXX=${{ matrix.config.use-clang == true && 'clang++-21' || 'g++' }}" >> "$GITHUB_ENV"
+          apk add wget python3 py3-pip ca-certificates samurai git pkgconf nodejs pnpm bash binutils patch ${{ ( matrix.config.use-clang == true ) && 'lld22 clang22 gcc' || 'gcc musl-dev g++' }}
+          echo "CC=${{ matrix.config.use-clang == true && 'clang-22' || 'gcc' }}" >> "$GITHUB_ENV"
+          echo "CXX=${{ matrix.config.use-clang == true && 'clang++-22' || 'g++' }}" >> "$GITHUB_ENV"
+          echo "CC_LD=${{ matrix.config.use-clang == true && 'lld' || '' }}" >> "$GITHUB_ENV"
+          echo "CXX_LD=${{ matrix.config.use-clang == true && 'lld' || '' }}" >> "$GITHUB_ENV"
 
       # NOTE: meson has no dependencies, so --break-system-packages doesn't really break anything!
       - name: Setup meson
