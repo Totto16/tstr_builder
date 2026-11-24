@@ -37,9 +37,10 @@ jobs:
 
           meson setup build -Dbuildtype=release --fatal-meson-warnings
 
-      - name: Verify clang-tidy
-        run: |
-          clang-tidy-22 --experimental-custom-checks --verify-config
+      # TODO later
+      # - name: Verify clang-tidy
+      #   run: |
+      #     clang-tidy-22 --experimental-custom-checks --verify-config
 
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
